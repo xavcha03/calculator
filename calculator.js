@@ -98,12 +98,13 @@ let buttonsList = [
 ];
 
 //calculatrice
-let calculatorElt = document.querySelector("#calculator");
+let calculatorElt = document.querySelector(".buttons");
 
 buttonsList.forEach((btn) => {
   //Création de l'élément DOM
   let newBtn = document.createElement("button"); //Création
   newBtn.classList.add("calc", "calc__btn", "calc__btn--" + btn.type);
+  
   newBtn.innerHTML = btn.content;
 
   //Inseretion du bouton dans la calculatrice

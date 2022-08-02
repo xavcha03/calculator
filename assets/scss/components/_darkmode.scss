@@ -1,0 +1,31 @@
+
+.dark .calc{
+    background-color: $color-dark-primary;
+    color:$color-primary;
+
+
+
+    &__screen{ //Ecran d'affichage
+        @include boxShadow-dark;
+
+    }
+
+    &__buttons{ //Groupe des boutons
+
+    }
+
+    &__btn{ //Base d'un bouton
+        
+        @include boxShadow-dark;
+
+        &--operation{//bouton de type opération
+            background-color: $color-dark-secondary;
+        }
+
+        &--number{//bouton de type number
+            background-color: $color-dark-primary;
+        }
+    }
+
+    
+}

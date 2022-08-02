@@ -1,0 +1,9 @@
+@mixin boxShadow-light {
+    box-shadow: 3px 3px 6px #9BA7AD, -3px -3px 6px #FFF9F9;
+    border-radius: 20px;
+}
+@mixin boxShadow-dark {
+/* contourDark */
+
+box-shadow: -3px -3px 6px #4D4D4D, 3px 3px 6px #0E1011;
+}

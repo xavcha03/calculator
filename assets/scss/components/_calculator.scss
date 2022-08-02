@@ -1,0 +1,47 @@
+
+.calc{
+    width: 600px;
+    margin: 0 auto;
+    padding: 1em;
+
+    display: flex;
+    flex-direction: column;
+    gap:1em;
+    border-radius: 1em;
+
+    background-color: $color-primary;
+
+
+
+    &__screen{ //Ecran d'affichage
+        @include boxShadow-light;
+        text-align: right;
+        padding: 0.5em;
+    }
+
+    &__buttons{ //Groupe des boutons
+
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap:1em;
+    }
+
+    &__btn{ //Base d'un bouton
+        
+        width: 100%;
+        height: 100%;
+        padding: 0.5em;
+        border:none;
+        @include boxShadow-light;
+
+        &--operation{//bouton de type opération
+            background-color: $color-secondary;
+        }
+
+        &--number{//bouton de type number
+            background-color: $color-primary;
+        }
+    }
+
+    
+}
