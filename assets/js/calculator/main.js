@@ -15,8 +15,8 @@ export default class Calculator {
       "calc__buttons",
       null
     );
-    //Ajout des boutons dans la section btn
 
+    //Ajout des boutons dans la section btn
     buttonsList.forEach((btn) => {
       groupbtn.appendChild(
         this.createSection(
@@ -31,8 +31,6 @@ export default class Calculator {
     this.calcElt.appendChild(screen);
     this.calcElt.appendChild(groupbtn);
   }
-
-  //Ajoute tous les bouton dans l'élément du dom passer en argument
 
   //Créé et retourne un element du dom
   createSection(type, id, className, content) {
