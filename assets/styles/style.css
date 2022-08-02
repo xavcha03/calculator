@@ -48,7 +48,8 @@ table {
 
 body {
   font-size: 18px;
-  font-family: 'Jost', sans-serif; }
+  font-family: 'Jost', sans-serif;
+  height: 100vh; }
 
 .dark .calc {
   background-color: #262829;
