@@ -8,7 +8,7 @@ export default class Calculator {
 
   //Affiche la calculatrice dans l'élément du Dom sélectionné
   addUIHtml() {
-    let screen = this.createSection("section", "screen", "calc__screen", null);
+    let screen = this.createSection("section", "screen", "calc__screen", "0");
     let groupbtn = this.createSection(
       "section",
       "buttonList",
@@ -18,23 +18,42 @@ export default class Calculator {
 
     //Ajout des boutons dans la section btn
     buttonsList.forEach((btn) => {
-      groupbtn.appendChild(
-        this.createSection(
-          "button",
-          null,
-          "calc calc__btn calc__btn--" + btn.type,
-          btn.content
-        )
+      let btnElt = this.createSection(
+        "button",
+        null,
+        "calc calc__btn calc__btn--" + btn.type,
+        btn.content
       );
+      btnElt.addEventListener("click", (e) => {
+        this.executeBtn(e.target.innerHTML);
+      });
+      groupbtn.appendChild(btnElt);
     });
 
     this.calcElt.appendChild(screen);
     this.calcElt.appendChild(groupbtn);
   }
 
+  //
+  executeBtn(btnValue) {
+    //Effectue une action en fonction de la valeur
+    //Commencer par détecter si c'est un nombre
+    if (!isNaN(Number(btnValue))) {
+      this.calculatorAddNum(btnValue);
+    }
+  }
+
+  //ajoute un nombre en argument dans la zone de calcul
+  calculatorAddNum(num) {
+    let screen = document.querySelector("#screen");
+    let currentScreenVal = Number(screen.innerHTML);
+    console.log(currentScreenVal);
+    currentScreenVal = currentScreenVal * 10 + num;
+    screen.innerHTML = currentScreenVal;
+  }
+
   //Créé et retourne un element du dom
   createSection(type, id, className, content) {
-    console.log(className);
     //Création de l'élément
     let domElement = document.createElement(type);
     //Ajout de l'id
