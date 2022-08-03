@@ -33,7 +33,7 @@ export const buttonsList = [
   },
   {
     type: "operation",
-    content: "x",
+    content: "*",
   },
   {
     type: "operation",
@@ -85,7 +85,7 @@ export const buttonsList = [
   },
   {
     type: "number",
-    content: 0,
+    content: '0',
   },
   {
     type: "operation",

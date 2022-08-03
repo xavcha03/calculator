@@ -1,5 +1,4 @@
 import { buttonsList } from "./buttons.js";
-
 export default class Calculator {
   constructor(calcElt) {
     this.calcElt = calcElt;
@@ -8,7 +7,7 @@ export default class Calculator {
 
   //Affiche la calculatrice dans l'élément du Dom sélectionné
   addUIHtml() {
-    let screen = this.createSection("section", "screen", "calc__screen", "0");
+    let screen = this.createSection("section", "screen", "calc__screen", null);
     let groupbtn = this.createSection(
       "section",
       "buttonList",
@@ -36,21 +35,20 @@ export default class Calculator {
 
   //
   executeBtn(btnValue) {
-    //Effectue une action en fonction de la valeur
-    //Commencer par détecter si c'est un nombre
-    if (!isNaN(Number(btnValue))) {
-      this.calculatorAddNum(btnValue);
+    let screen = document.querySelector("#screen");
+    let currentScreenVal = screen.innerHTML;
+    
+    if(btnValue=='='){
+      console.log(screen.innerHTML);
+      screen.innerHTML = this.computeResult(currentScreenVal);
+    }else{
+      
+      currentScreenVal = currentScreenVal + btnValue;
+      screen.innerHTML = currentScreenVal;
     }
+    
   }
 
-  //ajoute un nombre en argument dans la zone de calcul
-  calculatorAddNum(num) {
-    let screen = document.querySelector("#screen");
-    let currentScreenVal = Number(screen.innerHTML);
-    console.log(currentScreenVal);
-    currentScreenVal = currentScreenVal * 10 + num;
-    screen.innerHTML = currentScreenVal;
-  }
 
   //Créé et retourne un element du dom
   createSection(type, id, className, content) {
@@ -66,4 +64,12 @@ export default class Calculator {
 
     return domElement;
   }
+
+  computeResult(str){
+    
+    return Function('return ' + str)()
+  }
+  
 }
+
+
