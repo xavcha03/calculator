@@ -7,7 +7,7 @@ export default class Calculator {
 
   //Affiche la calculatrice dans l'élément du Dom sélectionné
   addUIHtml() {
-    let screen = this.createSection("section", "screen", "calc__screen", null);
+    let screen = this.createSection("section", "screen", "calc__screen", "0");
     let groupbtn = this.createSection(
       "section",
       "buttonList",
@@ -35,18 +35,45 @@ export default class Calculator {
 
   //
   executeBtn(btnValue) {
-    let screen = document.querySelector("#screen");
-    let currentScreenVal = screen.innerHTML;
+    switch(btnValue){
+      case '=':
+        this.execScreenContent();
+        break;
+      case 'C':
+        this.setScreenContent("0");
+        break;
+      case 'X²':
+        let content = this.getScreenContent();
+        this.setScreenContent(Math.pow(Number(this.getScreenContent()),2));
+        break;
+      default:
+        this.addKeyOnScreen(btnValue);
+        
+
+    }    
+  }
+
+  //Ajoute le contenu de la touche à l'écran
+  addKeyOnScreen(key){
     
-    if(btnValue=='='){
-      console.log(screen.innerHTML);
-      screen.innerHTML = this.computeResult(currentScreenVal);
-    }else{
-      
-      currentScreenVal = currentScreenVal + btnValue;
-      screen.innerHTML = currentScreenVal;
-    }
-    
+    if(this.getScreenContent()=="0") this.setScreenContent("");
+    this.setScreenContent(this.getScreenContent()+key);
+  }
+
+  //Execute le calcul affiché à l'écran
+  execScreenContent(){
+    let screenContent = this.getScreenContent();
+    this.setScreenContent(this.computeResult(this.getScreenContent()))
+  }
+
+  //Modifie le contenu de l'écran
+  setScreenContent(str){
+    document.querySelector("#screen").innerHTML = str;
+  }
+
+  //récupere le contenu de l'écran
+  getScreenContent(){
+    return document.querySelector("#screen").innerHTML;
   }
 
 
@@ -66,7 +93,7 @@ export default class Calculator {
   }
 
   computeResult(str){
-    
+    //Remplacement de caractère
     return Function('return ' + str)()
   }
   

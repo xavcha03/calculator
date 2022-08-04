@@ -89,7 +89,7 @@ export const buttonsList = [
   },
   {
     type: "operation",
-    content: ",",
+    content: ".",
   },
   {
     type: "operation",
