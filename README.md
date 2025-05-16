@@ -150,4 +150,17 @@ Xavier Chabert — [GitHub](https://github.com/xavcha03)
 
 ---
 
+## 🎨 Compilation du SCSS
+
+Pour générer le CSS à partir du SCSS :
+
+```bash
+npx sass assets/scss/main.scss:assets/styles/main.css --no-source-map --style=compressed
+```
+
+- Le CSS minifié sera généré dans `assets/styles/main.css`.
+- (⚠️) Les imports SCSS utilisent la syntaxe @import, qui sera dépréciée à terme. Pour un projet long terme, migrer vers @use/@forward.
+
+---
+
 Ce projet met en avant les bonnes pratiques du développement front-end moderne, et peut servir de base solide pour des applications web plus ambitieuses.
