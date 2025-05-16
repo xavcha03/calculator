@@ -1,4 +1,32 @@
 import { buttonsList } from "./buttons.js";
+
+const SPECIAL_ACTIONS = {
+  '=': function () { this.execScreenContent(); },
+  'C': function () { this.setScreenContent("0"); },
+  'X²': function () {
+    this.setScreenContent(Math.pow(Number(this.getScreenContent()), 2));
+  },
+  '<=': function () { this.backspaceScreen(); },
+  '√': function () {
+    const val = Number(this.getScreenContent());
+    if (isNaN(val) || val < 0) {
+      this.setScreenContent('Erreur');
+    } else {
+      this.setScreenContent(Math.sqrt(val));
+    }
+  },
+  'π': function () {
+    let contentPi = this.getScreenContent();
+    if (contentPi === 'Erreur' || contentPi === '' || contentPi === '0') {
+      this.setScreenContent(Math.PI);
+    } else if (/[0-9)]$/.test(contentPi) || contentPi.endsWith(Math.PI)) {
+      this.setScreenContent(contentPi + '*' + Math.PI);
+    } else {
+      this.setScreenContent(contentPi + Math.PI);
+    }
+  }
+};
+
 export default class Calculator {
   constructor(calcElt) {
     this.calcElt = calcElt;
@@ -47,54 +75,20 @@ export default class Calculator {
 
   //
   executeBtn(btnValue) {
-    switch(btnValue){
-      case '=':
-        this.execScreenContent();
-        break;
-      case 'C':
-        this.setScreenContent("0");
-        break;
-      case 'X²':
-        this.setScreenContent(Math.pow(Number(this.getScreenContent()),2));
-        break;
-      case '<=':
-        this.backspaceScreen();
-        break;
-      case '√':
-        const val = Number(this.getScreenContent());
-        if (isNaN(val) || val < 0) {
-          this.setScreenContent('Erreur');
-        } else {
-          this.setScreenContent(Math.sqrt(val));
-        }
-        break;
-      case 'π':
-        // Si l'écran affiche 'Erreur', on reset
-        let contentPi = this.getScreenContent();
-        if(contentPi === 'Erreur' || contentPi === '0') {
-          this.setScreenContent(Math.PI);
-        } else {
-          // Ajoute la valeur de pi à l'expression
-          this.setScreenContent(contentPi + Math.PI);
-        }
-        break;
-      default:
-        this.addKeyOnScreen(btnValue);
-    }    
+    if (SPECIAL_ACTIONS[btnValue]) {
+      SPECIAL_ACTIONS[btnValue].call(this);
+    } else {
+      this.addKeyOnScreen(btnValue);
+    }
   }
 
   //Ajoute le contenu de la touche à l'écran
   addKeyOnScreen(key){
     let content = this.getScreenContent();
-    // Si erreur affichée et on appuie sur un chiffre, on reset
-    if(content === 'Erreur' && /[0-9]/.test(key)) content = '';
-    // Limite la longueur de l'affichage
-    if(content.length >= 16) return;
-    // Empêche plusieurs opérateurs à la suite
-    if(/[+\-*/.]$/.test(content) && /[+\-*/.]/.test(key)) return;
-    // Empêche plusieurs points dans un même nombre
-    if(key === '.' && /\d*\.\d*$/.test(content.split(/[^\d.]/).pop())) return;
-    // Remplace le 0 initial
+    if (this._shouldResetOnError(content, key)) content = '';
+    if (this._isMaxLength(content)) return;
+    if (this._isDoubleOperator(content, key)) return;
+    if (this._isDoubleDot(content, key)) return;
     if(content=="0") content = "";
     // Gestion des opérateurs spéciaux
     if(key === '×') key = '*';
@@ -185,6 +179,20 @@ export default class Calculator {
       e.preventDefault();
     }
     // Ajout possible : gestion de racine, pi, etc. via d'autres touches
+  }
+
+  // Méthodes utilitaires privées
+  _shouldResetOnError(content, key) {
+    return content === 'Erreur' && /[0-9]/.test(key);
+  }
+  _isMaxLength(content) {
+    return content.length >= 16;
+  }
+  _isDoubleOperator(content, key) {
+    return /[+\-*/.]$/.test(content) && /[+\-*/.]/.test(key);
+  }
+  _isDoubleDot(content, key) {
+    return key === '.' && /\d*\.\d*$/.test(content.split(/[^\d.]/).pop());
   }
 }
 

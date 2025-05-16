@@ -133,4 +133,29 @@ describe('Calculator - Logique', () => {
     pressSequence(['π']);
     expect(Number(screen.innerHTML)).toBeCloseTo(Math.PI, 8);
   });
+
+  test('Chiffre puis pi = multiplication', () => {
+    pressSequence(['2', 'π']);
+    expect(screen.innerHTML).toBe('2*' + Math.PI);
+  });
+
+  test('Chiffre puis pi puis pi = multiplication en chaîne', () => {
+    pressSequence(['2', 'π', 'π']);
+    expect(screen.innerHTML).toBe('2*' + Math.PI + '*' + Math.PI);
+  });
+
+  test('pi puis pi = multiplication', () => {
+    pressSequence(['π', 'π']);
+    expect(screen.innerHTML).toBe(Math.PI + '*' + Math.PI);
+  });
+
+  test('0 puis pi = pi', () => {
+    pressSequence(['0', 'π']);
+    expect(screen.innerHTML).toBe(String(Math.PI));
+  });
+
+  test('Erreur puis pi = pi', () => {
+    pressSequence(['8', '/', '0', '=', 'π']);
+    expect(screen.innerHTML).toBe(String(Math.PI));
+  });
 }); 
