@@ -3,6 +3,10 @@ export default class Calculator {
   constructor(calcElt) {
     this.calcElt = calcElt;
     this.addUIHtml();
+    // Ajout de la gestion du clavier
+    document.addEventListener("keydown", (e) => {
+      this.handleKeyboard(e);
+    });
   }
 
   //Affiche la calculatrice dans l'élément du Dom sélectionné
@@ -23,9 +27,17 @@ export default class Calculator {
         "calc calc__btn calc__btn--" + btn.type,
         btn.content
       );
-      btnElt.addEventListener("click", (e) => {
-        this.executeBtn(e.target.innerHTML);
-      });
+      // Ajout d'un attribut spécial pour le bouton backspace
+      if (btn.content === '<=') {
+        btnElt.setAttribute('data-action', 'backspace');
+        btnElt.addEventListener("click", () => {
+          this.executeBtn('<=');
+        });
+      } else {
+        btnElt.addEventListener("click", (e) => {
+          this.executeBtn(e.target.innerHTML);
+        });
+      }
       groupbtn.appendChild(btnElt);
     });
 
@@ -43,27 +55,60 @@ export default class Calculator {
         this.setScreenContent("0");
         break;
       case 'X²':
-        let content = this.getScreenContent();
         this.setScreenContent(Math.pow(Number(this.getScreenContent()),2));
+        break;
+      case '<=':
+        this.backspaceScreen();
+        break;
+      case '√':
+        const val = Number(this.getScreenContent());
+        if (isNaN(val) || val < 0) {
+          this.setScreenContent('Erreur');
+        } else {
+          this.setScreenContent(Math.sqrt(val));
+        }
+        break;
+      case 'π':
+        // Si l'écran affiche 'Erreur', on reset
+        let contentPi = this.getScreenContent();
+        if(contentPi === 'Erreur' || contentPi === '0') {
+          this.setScreenContent(Math.PI);
+        } else {
+          // Ajoute la valeur de pi à l'expression
+          this.setScreenContent(contentPi + Math.PI);
+        }
         break;
       default:
         this.addKeyOnScreen(btnValue);
-        
-
     }    
   }
 
   //Ajoute le contenu de la touche à l'écran
   addKeyOnScreen(key){
-    
-    if(this.getScreenContent()=="0") this.setScreenContent("");
-    this.setScreenContent(this.getScreenContent()+key);
+    let content = this.getScreenContent();
+    // Si erreur affichée et on appuie sur un chiffre, on reset
+    if(content === 'Erreur' && /[0-9]/.test(key)) content = '';
+    // Limite la longueur de l'affichage
+    if(content.length >= 16) return;
+    // Empêche plusieurs opérateurs à la suite
+    if(/[+\-*/.]$/.test(content) && /[+\-*/.]/.test(key)) return;
+    // Empêche plusieurs points dans un même nombre
+    if(key === '.' && /\d*\.\d*$/.test(content.split(/[^\d.]/).pop())) return;
+    // Remplace le 0 initial
+    if(content=="0") content = "";
+    // Gestion des opérateurs spéciaux
+    if(key === '×') key = '*';
+    if(key === '÷') key = '/';
+    // Empêche d'ajouter <=, √, π à l'écran
+    if(['<=','√','π'].includes(key)) return;
+    this.setScreenContent(content+key);
   }
 
   //Execute le calcul affiché à l'écran
   execScreenContent(){
     let screenContent = this.getScreenContent();
-    this.setScreenContent(this.computeResult(this.getScreenContent()))
+    let result = this.computeResult(screenContent);
+    this.setScreenContent(result);
   }
 
   //Modifie le contenu de l'écran
@@ -93,10 +138,54 @@ export default class Calculator {
   }
 
   computeResult(str){
-    //Remplacement de caractère
-    return Function('return ' + str)()
+    try {
+      // Remplacement des opérateurs spéciaux
+      str = str.replace(/×/g, '*').replace(/÷/g, '/');
+      // Remplacement de la virgule par un point (si besoin)
+      str = str.replace(/,/g, '.');
+      // Remplacement de pi par sa valeur numérique
+      str = str.replace(/π/g, Math.PI);
+      // Empêche l'exécution de code malicieux
+      if(/[^0-9+\-*/().]/.test(str)) throw new Error('Erreur');
+      let result = Function('"use strict";return (' + str + ')')();
+      if(!isFinite(result) || isNaN(result)) throw new Error('Erreur');
+      // Arrondi à 8 décimales max
+      result = Math.round(result * 1e8) / 1e8;
+      return result.toString();
+    } catch(e) {
+      return 'Erreur';
+    }
   }
   
+  // Efface le dernier caractère de l'écran
+  backspaceScreen() {
+    let content = this.getScreenContent();
+    if (content.length > 1) {
+      this.setScreenContent(content.slice(0, -1));
+    } else {
+      this.setScreenContent("0");
+    }
+  }
+
+  // Gestion du clavier
+  handleKeyboard(e) {
+    const key = e.key;
+    if (key >= '0' && key <= '9') {
+      this.executeBtn(key);
+    } else if (["+", "-", "*", "/", ".", "(", ")"].includes(key)) {
+      this.executeBtn(key);
+    } else if (key === "Enter" || key === "=") {
+      this.executeBtn("=");
+      e.preventDefault();
+    } else if (key === "Backspace") {
+      this.executeBtn("<=");
+      e.preventDefault();
+    } else if (key === "c" || key === "C") {
+      this.executeBtn("C");
+      e.preventDefault();
+    }
+    // Ajout possible : gestion de racine, pi, etc. via d'autres touches
+  }
 }
 
 
