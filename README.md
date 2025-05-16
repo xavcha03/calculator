@@ -69,6 +69,19 @@ calculator/
 
 ---
 
+## 📄 .gitignore
+
+Ce projet utilise un fichier `.gitignore` adapté pour Node.js :
+- `node_modules/` n'est jamais versionné
+- Les fichiers de logs, de build, de test et de configuration locale sont exclus
+
+Pensez à toujours installer les dépendances avec :
+```bash
+npm install
+```
+
+---
+
 ## ✨ Utilisation
 
 Dans votre `index.html`, placez simplement :
